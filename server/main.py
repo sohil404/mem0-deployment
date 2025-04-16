@@ -41,18 +41,20 @@ DEFAULT_CONFIG = {
         }
     },
     "llm": {
-        "provider": "together",
+        "provider": "openai",
         "config": {
             "api_key": TOGETHER_API_KEY,
             "temperature": 0.2,
-            "model": LLM_MODEL
+            "model": LLM_MODEL,
+            "base_url": "https://api.together.xyz/v1"
         }
     },
     "embedder": {
-        "provider": "together",
+        "provider": "openai",
         "config": {
             "api_key": TOGETHER_API_KEY,
-            "model": EMBEDDING_MODEL
+            "model": EMBEDDING_MODEL,
+            "openai_api_base": "https://api.together.xyz/v1"
         }
     },
     "history_db_path": HISTORY_DB_PATH,
