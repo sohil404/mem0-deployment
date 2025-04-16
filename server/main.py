@@ -36,9 +36,7 @@ DEFAULT_CONFIG = {
             "dbname": POSTGRES_DB,
             "user": POSTGRES_USER,
             "password": POSTGRES_PASSWORD,
-            "collection_name": POSTGRES_COLLECTION_NAME,
-            "ssl": True,
-            "sslmode": "require"
+            "collection_name": POSTGRES_COLLECTION_NAME
         }
     },
     "llm": {
@@ -66,7 +64,11 @@ DEFAULT_CONFIG = {
 }
 
 # Initialize memory instance with default configuration
-MEMORY_INSTANCE = Memory.from_config(DEFAULT_CONFIG)
+try:
+    MEMORY_INSTANCE = Memory.from_config(DEFAULT_CONFIG)
+except Exception as e:
+    logging.error(f"Configuration validation error: {str(e)}")
+    raise
 
 app = FastAPI(
     title="Mem0 REST APIs",
