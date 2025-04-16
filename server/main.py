@@ -56,8 +56,8 @@ DEFAULT_CONFIG = {
         "provider": "openai",
         "config": {
             "api_key": OPENROUTER_API_KEY,
-            "model": "nomic-ai/nomic-embed-text-v1.5",
-            "base_url": "https://openrouter.ai/api/v1"
+            "model": "text-embedding-ada-002",
+            "openai_api_base": "https://openrouter.ai/api/v1"
         }
     },
     "history_db_path": HISTORY_DB_PATH,
@@ -65,7 +65,9 @@ DEFAULT_CONFIG = {
 
 # Initialize memory instance with default configuration
 try:
+    logging.info("Initializing memory with config: %s", DEFAULT_CONFIG)
     MEMORY_INSTANCE = Memory.from_config(DEFAULT_CONFIG)
+    logging.info("Memory initialization successful")
 except Exception as e:
     logging.error(f"Configuration validation error: {str(e)}")
     raise
