@@ -23,7 +23,7 @@ POSTGRES_COLLECTION_NAME = os.environ.get("POSTGRES_COLLECTION_NAME", "memories"
 
 # Get model configuration
 TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY")
-LLM_MODEL = os.environ.get("LLM_MODEL", "meta-llama-3.2-3b-instruct-turbo")
+LLM_MODEL = os.environ.get("LLM_MODEL", "mistralai/Mistral-7B-Instruct-v0.2")
 EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "togethercomputer/m2-bert-80M-8k-retrieval")
 HISTORY_DB_PATH = os.environ.get("HISTORY_DB_PATH", "/app/history/history.db")
 
