@@ -33,8 +33,8 @@ os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
 # OpenAI API key is still needed for some fallback functionality
 os.environ["OPENAI_API_KEY"] = TOGETHER_API_KEY
 
-# Initialize pgvector extension if needed
-def setup_pgvector():
+# Initialize database with pgvector extension and required tables
+def setup_database():
     try:
         conn = psycopg2.connect(
             host=POSTGRES_HOST,
@@ -46,7 +46,7 @@ def setup_pgvector():
         conn.autocommit = True
         cursor = conn.cursor()
         
-        # Check if pgvector extension is installed
+        # Create pgvector extension if it doesn't exist
         cursor.execute("SELECT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'vector')")
         extension_exists = cursor.fetchone()[0]
         
@@ -54,17 +54,56 @@ def setup_pgvector():
             logging.info("Creating pgvector extension...")
             cursor.execute("CREATE EXTENSION IF NOT EXISTS vector")
             logging.info("pgvector extension created successfully")
+        
+        # Check if memories table exists and create it if needed
+        cursor.execute(f"""
+            SELECT EXISTS (
+                SELECT FROM information_schema.tables 
+                WHERE table_name = '{POSTGRES_COLLECTION_NAME}'
+            )
+        """)
+        table_exists = cursor.fetchone()[0]
+        
+        if not table_exists:
+            logging.info(f"Creating {POSTGRES_COLLECTION_NAME} table...")
+            
+            # Create the memories table with pgvector support
+            # This is a basic schema - mem0ai will typically handle this,
+            # but we're creating it just in case
+            cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {POSTGRES_COLLECTION_NAME} (
+                    id UUID PRIMARY KEY,
+                    content TEXT NOT NULL,
+                    metadata JSONB,
+                    user_id TEXT,
+                    agent_id TEXT,
+                    run_id TEXT,
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                    embedding vector(1536)
+                )
+            """)
+            
+            # Add indices for faster queries
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_{POSTGRES_COLLECTION_NAME}_user_id ON {POSTGRES_COLLECTION_NAME}(user_id);
+                CREATE INDEX IF NOT EXISTS idx_{POSTGRES_COLLECTION_NAME}_agent_id ON {POSTGRES_COLLECTION_NAME}(agent_id);
+                CREATE INDEX IF NOT EXISTS idx_{POSTGRES_COLLECTION_NAME}_run_id ON {POSTGRES_COLLECTION_NAME}(run_id);
+                CREATE INDEX IF NOT EXISTS idx_{POSTGRES_COLLECTION_NAME}_embedding ON {POSTGRES_COLLECTION_NAME} USING ivfflat (embedding vector_cosine_ops);
+            """)
+            
+            logging.info(f"{POSTGRES_COLLECTION_NAME} table created successfully")
             
         cursor.close()
         conn.close()
         return True
     except Exception as e:
-        logging.error(f"Error setting up pgvector: {str(e)}")
+        logging.error(f"Error setting up database: {str(e)}")
         return False
 
-# Make sure pgvector is set up
-setup_result = setup_pgvector()
-logging.info(f"pgvector setup result: {setup_result}")
+# Make sure the database is properly set up
+setup_result = setup_database()
+logging.info(f"Database setup result: {setup_result}")
 
 DEFAULT_CONFIG = {
     "version": "v1.1",
