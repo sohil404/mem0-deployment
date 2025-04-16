@@ -18,5 +18,5 @@ COPY server/ .
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8000
 
-# Use CMD with brackets for better signal handling
-CMD uvicorn main:app --host 0.0.0.0 --port ${PORT}
+# Use shell form for CMD to ensure environment variables are expanded
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT
