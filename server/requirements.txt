@@ -5,4 +5,4 @@ mem0ai>=0.1.91
 python-dotenv==1.0.1
 psycopg2-binary>=2.9.10
 pgvector==0.2.5
-SQLAlchemy==2.0.29
+SQLAlchemy>=2.0.31,<3.0.0
