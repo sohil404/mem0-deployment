@@ -14,9 +14,12 @@ RUN mkdir -p /app/history
 # Copy server files
 COPY server/ .
 
+# Make the entrypoint script executable
+RUN chmod +x entrypoint.sh
+
 # Railway dynamically assigns a port, so we'll use whatever is provided in $PORT
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8000
 
-# Use shell form for CMD to ensure environment variables are expanded
-CMD uvicorn main:app --host 0.0.0.0 --port $PORT
+# Use the entrypoint script to start the application
+ENTRYPOINT ["./entrypoint.sh"]
