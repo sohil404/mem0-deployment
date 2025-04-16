@@ -14,12 +14,12 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 # Load environment variables
 load_dotenv()
 
-# Database configuration
-POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "ep-still-sun-a19xl7v6-pooler.ap-southeast-1.aws.neon.tech")
+# Database configuration - read from environment variables
+POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "postgres")
 POSTGRES_PORT = os.environ.get("POSTGRES_PORT", "5432")
-POSTGRES_DB = os.environ.get("POSTGRES_DB", "abkidhar")
-POSTGRES_USER = os.environ.get("POSTGRES_USER", "abkidhar_owner")
-POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "npg_U1AqrJp6cwtk")
+POSTGRES_DB = os.environ.get("POSTGRES_DB", "postgres")
+POSTGRES_USER = os.environ.get("POSTGRES_USER", "postgres")
+POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "postgres")
 POSTGRES_COLLECTION_NAME = os.environ.get("POSTGRES_COLLECTION_NAME", "memories")
 
 # Get model configuration
