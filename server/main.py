@@ -27,6 +27,11 @@ LLM_MODEL = os.environ.get("LLM_MODEL", "meta-llama-3.2-3b-instruct-turbo")
 EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "m2-bert-retrieval-8k")
 HISTORY_DB_PATH = os.environ.get("HISTORY_DB_PATH", "/app/history/history.db")
 
+# Set environment variables that mem0ai uses internally
+os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
+# OpenAI API key is still needed for embeddings as fallback
+os.environ["OPENAI_API_KEY"] = TOGETHER_API_KEY
+
 DEFAULT_CONFIG = {
     "version": "v1.1",
     "vector_store": {
@@ -41,19 +46,18 @@ DEFAULT_CONFIG = {
         }
     },
     "llm": {
-        "provider": "openai",
+        "provider": "together",
         "config": {
-            "api_key": TOGETHER_API_KEY,
-            "temperature": 0.2,
             "model": LLM_MODEL,
-            "base_url": "https://api.together.xyz/v1"
+            "temperature": 0.2,
+            "max_tokens": 2000
         }
     },
     "embedder": {
         "provider": "openai",
         "config": {
             "api_key": TOGETHER_API_KEY,
-            "model": EMBEDDING_MODEL,
+            "model": "text-embedding-ada-002",
             "openai_api_base": "https://api.together.xyz/v1"
         }
     },
