@@ -3,10 +3,10 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Copy requirements first for better layer caching
-COPY server/requirements.txt .
+COPY server/requirements.txt /app/requirements.txt
 
 # Add pgvector dependency for PostgreSQL vector support
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
 # Create directory for history database
 RUN mkdir -p /app/history
