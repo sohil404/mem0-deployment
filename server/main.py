@@ -21,9 +21,10 @@ POSTGRES_USER = os.environ.get("POSTGRES_USER", "postgres")
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "postgres")
 POSTGRES_COLLECTION_NAME = os.environ.get("POSTGRES_COLLECTION_NAME", "memories")
 
-# Get OpenRouter configuration
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
-OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "mistralai/mistral-small")
+# Get model configuration
+TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY")
+LLM_MODEL = os.environ.get("LLM_MODEL", "meta-llama-3.2-3b-instruct-turbo")
+EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "m2-bert-retrieval-8k")
 HISTORY_DB_PATH = os.environ.get("HISTORY_DB_PATH", "/app/history/history.db")
 
 DEFAULT_CONFIG = {
@@ -40,24 +41,18 @@ DEFAULT_CONFIG = {
         }
     },
     "llm": {
-        "provider": "openai",
+        "provider": "together",
         "config": {
-            "api_key": OPENROUTER_API_KEY,
+            "api_key": TOGETHER_API_KEY,
             "temperature": 0.2,
-            "model": OPENROUTER_MODEL,
-            "base_url": "https://openrouter.ai/api/v1",
-            "http_headers": {
-                "HTTP-Referer": "https://mem0-deployment.railway.app",
-                "X-Title": "Mem0 Deployment"
-            }
+            "model": LLM_MODEL
         }
     },
     "embedder": {
-        "provider": "openai",
+        "provider": "together",
         "config": {
-            "api_key": OPENROUTER_API_KEY,
-            "model": "text-embedding-ada-002",
-            "openai_api_base": "https://openrouter.ai/api/v1"
+            "api_key": TOGETHER_API_KEY,
+            "model": EMBEDDING_MODEL
         }
     },
     "history_db_path": HISTORY_DB_PATH,
