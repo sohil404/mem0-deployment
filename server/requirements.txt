@@ -7,3 +7,4 @@ psycopg2-binary>=2.9.10
 pgvector==0.2.5
 SQLAlchemy>=2.0.31,<3.0.0
 together>=0.2.7
+chromadb>=0.4.22
