@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, List, Any, Dict
 from mem0 import Memory
 from dotenv import load_dotenv
+import psycopg2
 
 import logging
 
@@ -13,12 +14,12 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 # Load environment variables
 load_dotenv()
 
-
-POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "postgres")
+# Database configuration
+POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "ep-still-sun-a19xl7v6-pooler.ap-southeast-1.aws.neon.tech")
 POSTGRES_PORT = os.environ.get("POSTGRES_PORT", "5432")
-POSTGRES_DB = os.environ.get("POSTGRES_DB", "postgres")
-POSTGRES_USER = os.environ.get("POSTGRES_USER", "postgres")
-POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "postgres")
+POSTGRES_DB = os.environ.get("POSTGRES_DB", "abkidhar")
+POSTGRES_USER = os.environ.get("POSTGRES_USER", "abkidhar_owner")
+POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "npg_U1AqrJp6cwtk")
 POSTGRES_COLLECTION_NAME = os.environ.get("POSTGRES_COLLECTION_NAME", "memories")
 
 # Get model configuration
@@ -31,6 +32,39 @@ HISTORY_DB_PATH = os.environ.get("HISTORY_DB_PATH", "/app/history/history.db")
 os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
 # OpenAI API key is still needed for some fallback functionality
 os.environ["OPENAI_API_KEY"] = TOGETHER_API_KEY
+
+# Initialize pgvector extension if needed
+def setup_pgvector():
+    try:
+        conn = psycopg2.connect(
+            host=POSTGRES_HOST,
+            port=POSTGRES_PORT,
+            dbname=POSTGRES_DB,
+            user=POSTGRES_USER,
+            password=POSTGRES_PASSWORD
+        )
+        conn.autocommit = True
+        cursor = conn.cursor()
+        
+        # Check if pgvector extension is installed
+        cursor.execute("SELECT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'vector')")
+        extension_exists = cursor.fetchone()[0]
+        
+        if not extension_exists:
+            logging.info("Creating pgvector extension...")
+            cursor.execute("CREATE EXTENSION IF NOT EXISTS vector")
+            logging.info("pgvector extension created successfully")
+            
+        cursor.close()
+        conn.close()
+        return True
+    except Exception as e:
+        logging.error(f"Error setting up pgvector: {str(e)}")
+        return False
+
+# Make sure pgvector is set up
+setup_result = setup_pgvector()
+logging.info(f"pgvector setup result: {setup_result}")
 
 DEFAULT_CONFIG = {
     "version": "v1.1",
