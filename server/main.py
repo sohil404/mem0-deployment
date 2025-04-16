@@ -24,12 +24,12 @@ POSTGRES_COLLECTION_NAME = os.environ.get("POSTGRES_COLLECTION_NAME", "memories"
 # Get model configuration
 TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY")
 LLM_MODEL = os.environ.get("LLM_MODEL", "meta-llama-3.2-3b-instruct-turbo")
-EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "m2-bert-retrieval-8k")
+EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "togethercomputer/m2-bert-80M-8k-retrieval")
 HISTORY_DB_PATH = os.environ.get("HISTORY_DB_PATH", "/app/history/history.db")
 
 # Set environment variables that mem0ai uses internally
 os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
-# OpenAI API key is still needed for embeddings as fallback
+# OpenAI API key is still needed for some fallback functionality
 os.environ["OPENAI_API_KEY"] = TOGETHER_API_KEY
 
 DEFAULT_CONFIG = {
@@ -54,11 +54,9 @@ DEFAULT_CONFIG = {
         }
     },
     "embedder": {
-        "provider": "openai",
+        "provider": "together",
         "config": {
-            "api_key": TOGETHER_API_KEY,
-            "model": "text-embedding-ada-002",
-            "openai_api_base": "https://api.together.xyz/v1"
+            "model": EMBEDDING_MODEL
         }
     },
     "history_db_path": HISTORY_DB_PATH,
